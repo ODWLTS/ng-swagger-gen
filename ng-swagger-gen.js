@@ -681,6 +681,7 @@ function processModels(swagger, options) {
       modelIsObject: properties != null,
       modelIsEnum: enumValues != null,
       modelIsArray: elementType != null,
+      modelPropertiesHaveDate: Object.values(properties).filter(e => e.type === 'string' && e.format === 'date').length > 0,
       modelIsSimple: simpleType != null,
       modelSimpleType: simpleType,
       properties: properties == null ? null :
@@ -979,6 +980,7 @@ function processProperties(swagger, properties, requiredProperties) {
       propertyComments: toComments(property.description, 1),
       propertyRequired: requiredProperties.indexOf(name) >= 0,
       propertyType: propertyType(property),
+      propertyIsDate: property.type === 'string' && property.format === 'date'
     };
     result[name] = descriptor;
   }
@@ -1222,6 +1224,7 @@ function processServices(swagger, models, options) {
           paramIsBody: param.in === 'body',
           paramIsFormData: param.in === 'formData',
           paramIsArray: param.type === 'array',
+          paramIsDate: param.type === 'string' && param.format === 'date',
           paramToJson: param.in === 'formData' && !param.enum && paramTypeNoNull !== 'Blob' &&
             paramTypeNoNull !== 'string',
           paramDescription: param.description,
