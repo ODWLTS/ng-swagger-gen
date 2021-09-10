@@ -615,7 +615,6 @@ DependenciesResolver.prototype.get = function () {
  * are simplified descriptors for models.
  */
 function processModels(swagger, options) {
-  var sortModelParams = options.sortModelParams || 'desc';
   var name, model, i, property;
   var models = {};
   for (name in swagger.definitions) {
@@ -638,7 +637,7 @@ function processModels(swagger, options) {
         simpleType = null;
         enumValues = null;
       }
-    } else if (model.type === 'string') {
+    } else if (model.type === 'string' && model?.format != 'date') {
       enumValues = model.enum || [];
       if (enumValues.length == 0) {
         simpleType = 'string';
@@ -700,16 +699,8 @@ function processModels(swagger, options) {
         descriptor.modelProperties.push(property);
       }
       descriptor.modelProperties.sort((a, b) => {
-        switch (sortModelParams) {
-          case 'asc':
-            return a.propertyName > b.propertyName ? 1 :
-              a.propertyName < b.propertyName ? -1 : 0;
-          case 'desc':
-            return a.propertyName > b.propertyName ? -1 :
-              a.propertyName < b.propertyName ? 1 : 0;
-          default:
-            return 0;
-        }
+        return a.propertyName < b.propertyName ? -1 :
+          a.propertyName > b.propertyName ? 1 : 0;
       });
       if (descriptor.modelProperties.length > 0) {
         descriptor.modelProperties[
@@ -897,6 +888,9 @@ function propertyType(property) {
       }
       else if (property.format === 'byte') {
         return 'ArrayBuffer';
+      }
+      else if (property.format === 'date') {
+        return 'Date';
       }
       return 'string';
     case 'array':
