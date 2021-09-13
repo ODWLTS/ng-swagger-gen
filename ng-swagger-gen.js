@@ -681,6 +681,7 @@ function processModels(swagger, options) {
       modelIsObject: properties != null,
       modelIsEnum: enumValues != null,
       modelIsArray: elementType != null,
+      modelPropertiesHaveDate: Object.values(properties).filter(e => e.type === 'string' && e.format === 'date').length > 0,
       modelIsSimple: simpleType != null,
       modelSimpleType: simpleType,
       properties: properties == null ? null :
@@ -977,7 +978,6 @@ function processProperties(swagger, properties, requiredProperties) {
     var localPropertyType = propertyType(property);
     var localPropertyItemType = '';
     if (property.type === 'array' && property.items?.$ref !== undefined) {
-      console.log(localPropertyType.toString());
       localPropertyItemType = localPropertyType.toString().substring(6, localPropertyType.toString().length - 1);
     }
     var descriptor = {
