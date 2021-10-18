@@ -711,8 +711,6 @@ function processModels(swagger, options) {
           default:
             return 0;
         }
-        return a.propertyName < b.propertyName ? -1 :
-          a.propertyName > b.propertyName ? 1 : 0;
       });
       if (descriptor.modelProperties.length > 0) {
         descriptor.modelProperties[
@@ -980,15 +978,17 @@ function processProperties(swagger, properties, requiredProperties) {
     if (property.type === 'array' && property.items?.$ref !== undefined) {
       localPropertyItemType = localPropertyType.toString().substring(6, localPropertyType.toString().length - 1);
     }
+    const propertyName = name.indexOf('-') === -1 && name.indexOf(".") === -1 ? name : `"${name}"`;
     var descriptor = {
-      propertyName: name.indexOf('-') === -1 && name.indexOf(".") === -1 ? name : `"${name}"`,
+      propertyName: propertyName,
       propertyComments: toComments(property.description, 1),
       propertyRequired: requiredProperties.indexOf(name) >= 0,
       propertyType: localPropertyType,
       propertyItemType: localPropertyItemType,
       propertyIsComplex: property.$ref !== undefined,
       propertyIsComplexArray: property.type === 'array' && property.items?.$ref !== undefined,
-      propertyIsDate: property.type === 'string' && property.format === 'date'
+      propertyIsDate: property.type === 'string' && property.format === 'date',
+      propertyIsPayload: propertyName.toLowerCase() === 'payload'
     };
     result[name] = descriptor;
   }
