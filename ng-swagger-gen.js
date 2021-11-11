@@ -987,6 +987,7 @@ function processProperties(swagger, properties, requiredProperties) {
       propertyItemType: localPropertyItemType,
       propertyIsComplex: property.$ref !== undefined,
       propertyIsComplexArray: property.type === 'array' && property.items?.$ref !== undefined,
+      propertyIsBoolean: property.type === 'boolean',
       propertyIsDate: property.type === 'string' && property.format === 'date',
       propertyIsPayload: propertyName.toLowerCase() === 'payload'
     };
