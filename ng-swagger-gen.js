@@ -638,7 +638,7 @@ function processModels(swagger, options) {
         simpleType = null;
         enumValues = null;
       }
-    } else if (model.type === 'string' && model?.format != 'date') {
+    } else if (model.type === 'string' && (model?.format != 'date' || model?.format != 'date-time')) {
       enumValues = model.enum || [];
       if (enumValues.length == 0) {
         simpleType = 'string';
@@ -899,7 +899,7 @@ function propertyType(property) {
       else if (property.format === 'byte') {
         return 'ArrayBuffer';
       }
-      else if (property.format === 'date') {
+      else if (property.format === 'date' || property.format === 'date-time') {
         return 'Date';
       }
       return 'string';
@@ -988,7 +988,7 @@ function processProperties(swagger, properties, requiredProperties) {
       propertyIsComplex: property.$ref !== undefined,
       propertyIsComplexArray: property.type === 'array' && property.items?.$ref !== undefined,
       propertyIsBoolean: property.type === 'boolean',
-      propertyIsDate: property.type === 'string' && property.format === 'date',
+      propertyIsDate: property.type === 'string' && (property.format === 'date' || property.format === 'date-time'),
       propertyIsPayload: propertyName.toLowerCase() === 'payload'
     };
     result[name] = descriptor;
@@ -1233,7 +1233,7 @@ function processServices(swagger, models, options) {
           paramIsBody: param.in === 'body',
           paramIsFormData: param.in === 'formData',
           paramIsArray: param.type === 'array',
-          paramIsDate: param.type === 'string' && param.format === 'date',
+          paramIsDate: param.type === 'string' && (param.format === 'date' || param.format === 'date-time'),
           paramToJson: param.in === 'formData' && !param.enum && paramTypeNoNull !== 'Blob' &&
             paramTypeNoNull !== 'string',
           paramDescription: param.description,
