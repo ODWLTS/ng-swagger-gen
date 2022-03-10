@@ -681,7 +681,7 @@ function processModels(swagger, options) {
       modelIsObject: properties != null,
       modelIsEnum: enumValues != null,
       modelIsArray: elementType != null,
-      modelPropertiesHaveDate: Object.values(properties).filter(e => e.type === 'string' && e.format === 'date').length > 0,
+      modelPropertiesHaveDate: Object.values(properties).filter(e => e.type === 'string' && (e.format === 'date' || e.format === 'date-time')).length > 0,
       modelIsSimple: simpleType != null,
       modelSimpleType: simpleType,
       properties: properties == null ? null :
