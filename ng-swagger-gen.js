@@ -177,10 +177,16 @@ function doGenerate(swagger, options) {
   var removeStaleFiles = options.removeStaleFiles !== false;
   var generateEnumModule = options.enumModule !== false;
 
-  // Utility function to render a template and write it to a file
+  // Utility function to render a template and write it to a file. Skips
+  // the write (and the log line) when the rendered content matches what's
+  // already on disk so downstream incremental tools — Angular's compiler,
+  // Taskfile / Make / Bazel checksums — don't see false changes.
   var generate = function (template, model, file) {
     var code = Mustache.render(template, model, templates)
       .replace(/[^\S\r\n]+$/gm, '');
+    if (fs.existsSync(file) && fs.readFileSync(file, 'UTF-8') === code) {
+      return;
+    }
     fs.writeFileSync(file, code, 'UTF-8');
     console.info('Wrote ' + file);
   };
